@@ -1,0 +1,37 @@
+### Aliases and Functions for shell
+#
+
+# enable color support of ls and also add handy aliases
+if [ "$TERM" != "dumb" ]; then
+    eval "`dircolors -b`"
+    alias ls='ls --color=auto -F'
+fi
+
+# some more ls aliases
+alias l='ls -CFm'
+alias ll='ls -lFh'
+alias la='ls -AF'
+
+# disk
+alias df='df -h'
+alias du='du -h'
+alias duu='du -hs'
+
+# grep
+alias grep='grep --color=auto'
+alias rgrep='rgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+
+# some more ...
+#
+alias ps.='ps -u $USER --forest --format pid,tty,pcpu,args'
+alias ps..='ps -u $USER --forest --format pid,tty,pcpu,"%mem",stat,start,time,args'
+alias ps...='ps -A --forest --format user,pid,pcpu,"%mem",stat,start,time,args'
+alias pss='ps.'
+
+alias netstat.='netstat -nap --inet --inet6'
+alias netstatt='netstat.'
+
+#################################################x

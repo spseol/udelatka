@@ -1,0 +1,9 @@
+# ~/.xsessionrc
+#
+
+. ~/.zprofile
+
+#setxkbmap -option
+#setxkbmap -model pc105 -layout us,cz -variant ,qwerty \
+#          -option grp:shifts_toggle,grp_led:scroll,grp:switch
+#xmodmap ~/.Xmodmap
