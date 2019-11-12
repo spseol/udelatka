@@ -12,18 +12,24 @@ EOF
 fi
 
 jmeno=$(basename $0)
+
+#doma
 adr="/storage/iso-distro"
+# síťový disk
+adr="/home/qemu"
+# lokální disk
+adr="/storage"
+
 
 if [[  $jmeno =~ net ]]; then
     adr="/home/qemu"
 fi
 
-xhost +local:root >/dev/null
 
 # každý virtuální stroj musí mít jiné MAC adresy, 
 # proto se poslední byte generuje z IP adresy hostitelského PC
 # a jedna část adersy je náhodná (viz proměnná $nahoda).
-zIP=$(ip a s | egrep '10\.189'| perl -e '$vstup=<>; $vstup=~/(\d+\.\d+.\d+.\d+)/; ($vstup=$1)=~s/\.//g; $vstup=~/(..)(..)$/;  print "$1:$2\n";')
+zIP=$(ip a s | egrep '172\.24'| perl -e '$vstup=<>; $vstup=~/(\d+\.\d+.\d+.\d+)/; ($vstup=$1)=~s/\.//g; $vstup=~/(..)(..)$/;  print "$1:$2\n";')
 print "from IP id = \"$zIP\"\n";
 
 
@@ -33,15 +39,18 @@ createBridge() {
 
     ip link show dev br$vlan100 &>/dev/null || 
         brctl addbr br$vlan100
+        ip link set up dev br$vlan100
 
     ip link show dev vxlan$vlan100 &>/dev/null || 
-        ip -6 link add vxlan$vlan100 type vxlan id $vlan100 dstport 4789 group ff05::100 dev eth0 ttl 5
+        ip -6 link add vxlan$vlan100 type vxlan id $vlan100 dstport 4789 group ff05::100 dev br0 ttl 5
+        ip link set up dev vxlan$vlan100
 
     brctl show | grep vxlan$vlan100 &>/dev/null ||
         brctl addif br$vlan100 vxlan$vlan100
 
     tunctl -t $tap
     brctl addif br$vlan100 $tap
+    ip link set up dev $tap
 
 }
 
@@ -97,7 +106,7 @@ for opt in $@; do
             volbaOs "kvm $adr/winxp.img -m 512"
             ;;
         [lL]) 
-            volbaOs "kvm $adr/devuan.img -m 182"
+            volbaOs "kvm $adr/qemumachine.img -m 182"
             ;;
         [mM]) 
             volbaOs "kvm $adr/mikrotik.img -m 64"

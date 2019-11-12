@@ -1,1 +1,5 @@
-../qemu/startqemu
+#!/bin/zsh
+
+xhost +local:root >/dev/null
+
+sudo ../qemu/startqemu-sudo.zsh $@

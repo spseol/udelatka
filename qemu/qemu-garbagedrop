@@ -6,19 +6,36 @@
 # Úloha: 
 ############################################################
 
+taps=($(ip link show | grep -P 'tap\d\d\d+-.+:' | awk '{print $2}' | tr : ' '))
+for tap in $taps; do
+    if pgrep -f $tap; then
+        print "Zařízení $tap se používá."
+    else
+        ip link set down dev $tap
+        tunctl -d $tap
+    fi
+done
 
 bridges=($(ip link show | grep -P 'br\d\d\d+:' | awk '{print $2}' | tr : ' '))
 for br in $bridges; do
-    brctl delbr $br
+    if brctl show $br | grep tap; then
+        print "Bridge $br se používá."
+    else
+        vxlan=$(sed s/br/vxlan/ <<<$br)
+        print "Ruším $vxlan"
+        ip link set down dev $vxlan
+        ip link del $vxlan
+        print "Ruším $br"
+        ip link set down dev $br
+        brctl delbr $br
+    fi
 done
 
-vxlans=($(ip link show | grep -P 'vxlan\d\d\d+:' | awk '{print $2}' | tr : ' '))
-for vxlan in $vxlans; do
-    ip link del $vxlan
-done
+print '=========================================================='
+brctl show
 
-taps=($(ip link show | grep -P 'tap\d\d\d+-.+:' | awk '{print $2}' | tr : ' '))
-for tap in $taps; do
-    tunctl -d $tap
-done
-
+#vxlans=($(ip link show | grep -P 'vxlan\d\d\d+:' | awk '{print $2}' | tr : ' '))
+#for vxlan in $vxlans; do
+#    ip link set down dev $vxlan
+#    ip link del $vxlan
+#done
