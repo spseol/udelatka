@@ -106,7 +106,7 @@ for opt in $@; do
             volbaOs "kvm $adr/winxp.img -m 512"
             ;;
         [lL]) 
-            volbaOs "kvm $adr/qemumachine.img -m 182"
+            volbaOs "kvm $adr/devuan.img -m 182"
             ;;
         [mM]) 
             volbaOs "kvm $adr/mikrotik.img -m 64"
